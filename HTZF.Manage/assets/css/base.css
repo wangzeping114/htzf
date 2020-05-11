@@ -1,0 +1,145 @@
+﻿.f13 {font-size:13px;}
+.f14 {font-size:14px;}
+.f15 {font-size:15px;}
+.f16 {font-size:16px;}
+.f17 {font-size:18px;}
+.f18 {font-size:18px;}
+.f20 {font-size:20px;}
+.f24 {font-size:24px;}
+.fl{float:left}
+.fr{float:right}
+.tl{text-align:left}
+.tr{text-align:right}
+.tc{text-align:center}
+.show{display:block}
+.hidden{display:none}
+.hand{cursor:pointer;}
+.fontArial{font-family:Arial}
+.b{font-weight:bolder}
+.unline,.unline a{text-decoration:underline}
+.nounline,.nounline a,.list12 .nounline{text-decoration:none}
+.cen {text-align:center;}
+.cfx{clear:both}
+.dis{display:none;}
+.block{display:block;}
+.num{font-family:Georgia;}
+.f12{font-size:12px;}
+.f14{font-size:14px;}
+.f16{font-size:16px;}
+.f18{font-size:18px;}
+.f24{font-size:24px;}
+.f0{font-size:0px;}
+.w100 {width:100%;clear:both;overflow:hidden;}
+.w98{width:98%;clear:both;overflow:hidden;}
+.w97{width:97%;clear:both;overflow:hidden;}
+.w96{width:96%;clear:both;overflow:hidden;}
+.w95{width:95%;clear:both;overflow:hidden;}
+.w90{width:90%;clear:both;overflow:hidden;}
+.w85{width:85%;clear:both;overflow:hidden;}
+.w80{width:80%;clear:both;overflow:hidden;}
+.w50{width:50%;}
+.h10 {height:10px;}
+.h20 {height:30px;}
+.h30 {height:30px;}
+.h100 {height:100px;}
+.h190 {height:190px;}
+.ma {margin:auto;}
+.m4 {margin-top:4px;}
+.m5 {margin-top:5px;}
+.m10 {margin-top:10px;}
+.mb10 {margin-bottom:10px;}
+.m15 {margin-top:20px;}
+.m20 {margin-top:20px;}
+.m30 {margin-top:30px;}
+.ml5 {margin-left:5px !important;}
+.ml10 {margin-left:10px !important;}
+.ml15 {margin-left:15px !important;}
+.ml20 {margin-left:20px !important;}
+.ml30 {margin-left:30px !important;}
+.mr5{margin-right:5px !important;}
+.mr10 {margin-right:10px !important;}
+.mr20 {margin-right:20px !important;}
+.mr30 {margin-right:30px !important;}
+.lh25 {line-height:25px;}
+.ti25 {text-indent:25px;}
+.bgf { background-color:#fff;}
+.bg0 { background-color:#000;}
+.of {overflow:hidden;}
+.page{line-height:25px;background:#E8E8E8;padding-right:10px;margin-top:15px;}
+.g {border:1px solid green;}
+.more {float:right;margin-right:20px;}
+.more a{font-size:12px;color:#666;font-weight:normal;}
+.bggray {background-color:#e1e1e1}
+.bdgray {border:1px solid #e1e1e1;}
+.bdtgray {border-top:1px solid #e1e1e1;}
+.bdbgray {border-bottom:1px solid #e1e1e1;}
+.bdlgray {border-left:1px solid #e1e1e1;}
+.bdrgray {border-right:1px solid #e1e1e1;}  
+.bdred {border:1px solid #b61d1d;}
+.bdtred {border-top:1px solid #b61d1d;}
+.cred {color:#ff3b30}
+.cred a {color:#ff3b30}
+.red {color:red}
+.orange {color:orange}
+.bgred {background-color:#b61d1d}
+.dot {border:1px dotted #666;}
+.dott {border-top:1px dotted #666;}
+.fw {font-weight:bolder}
+.hl30 {height:30px;line-height:30px;}
+.hl35 {height:35px;line-height:35px;}
+.hl55 {height:55px;line-height:55px;}
+.hl65 {height:65px;line-height:65px;}
+.cur {cursor:pointer}
+
+/*分页样式*/
+div.jogger{margin:7px auto;padding:2px;font-family:"Microsoft YaHei"}
+div.jogger a{margin:2px;padding:.5em .64em .43em;background-color:#f2f2f2;color:#000;text-decoration:none;border:1px solid #dedede;}
+div.jogger a:active,div.jogger a:hover{margin:2px;padding:.5em .64em .43em;background-color:#008fbf;color:#fff}
+div.jogger span.current{margin-left:5px;}
+div.jogger span.disabled{display:none}
+
+#logo {font-family:"Microsoft YaHei"}
+#sidebar-menu, .btn{font-family:"Microsoft YaHei"}
+.page-title{font-family:"Microsoft YaHei"}
+
+.fty {font-family:"Microsoft YaHei"}
+
+.pfx {
+    float:left;font-size:18px;line-height:35px;width:35px;height:35px;
+}
+
+.m-r-10 {margin-right:5px;}
+.m-r-5 {margin-right:5px;}
+.thumb-lg {width:150px;height:150px;}
+
+.btn-pink, .btn-pink:hover, .btn-pink:focus, .btn-pink:active {
+    background-color:#fb6d9d !important;
+    border:1px solid #fb6d9d !important;color:#fff;
+}
+
+.btn-purple, .btn-purple:hover, .btn-purple:focus, .btn-purple:active {
+    background-color:#7266ba !important;
+    border:1px solid #7266ba !important;
+    color:#fff;
+}
+
+.btn-inverse, .btn-inverse:hover, .btn-inverse:focus, .btn-inverse:active, .btn-inverse.active, .btn-inverse.focus, .btn-inverse:active, .btn-inverse:focus, .btn-inverse:hover, .open > .dropdown-toggle.btn-inverse {
+    background-color:#4c5667 !important;
+    border:1px solid #4c5667 !important;
+    color:#fff;
+}
+
+.wrapper-content {padding-top:8px;}
+.page-heading {padding-top:10px;padding-bottom:10px;}
+.ibox {margin-bottom:10px;}
+
+.qsearch .ibox-content {padding-bottom:0px;}
+.qibox-content.ibox-content {padding-bottom:0px;padding-left:2px;padding-right:2px;padding-top:2px;}
+.btn i { margin-right:5px; }
+.pagelist {
+    color: #5e5e5e;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    text-shadow: none;
+}

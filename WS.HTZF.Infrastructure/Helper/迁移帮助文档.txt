@@ -1,0 +1,6 @@
+﻿1.有关MySql EF6 CodeFirst帮助文档请查阅:https://www.devjockeys.com/blog/c-sharp/using-entity-framework-with-mysql-a-code-first-example/
+2.如果您在本地没有数据库的情况下，请打开vs包管理器控制台（工具> NuGet包管理器>包管理器控制台）
+3.将WS.HTZF.Infrastructure 设置为项目启动项，并在NuGet包管理控制台中将默认项目设置为WS.HTZF.Infrastructure
+4.键入：1. enable-migrations
+        2. add-migration 自定义命名  --命名规范L: Add_实体表名，Modifiy_实体表名
+		3. update-database 

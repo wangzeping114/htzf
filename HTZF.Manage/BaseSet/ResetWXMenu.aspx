@@ -1,0 +1,107 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="ResetWXMenu.aspx.cs" Inherits="BaseSet_ResetWXMenu" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>系统设置</title>
+    <!--#include virtual="../publichtml/pubHead.htm" -->
+</head>
+
+<body class="gray-bg">
+    <div class="form-horizontal">
+        <div class="row wrapper border-bottom white-bg page-heading">
+            <div class="col-sm-12">
+                <ol class="breadcrumb">
+                    <li>系统设置
+                    </li>
+                    <li>系统设置
+                    </li>
+                    <li>微信配置
+                    </li>
+                </ol>
+            </div>
+        </div>
+        <div class="container">
+        </div>
+        <div class="margin-large-top text-center">
+            <button class="button button-small bg-sub icon-save" id="btnReset">生成微信公众号菜单</button>
+        </div>
+    </div>
+
+    <script type="text/html" id="tpl">
+    </script>
+    <script>
+        var t_url = 'http://www.meizhuwl.net/APPAPI/';
+       var AppKeyId=  'APPService:123'; 
+       var layerIndex;
+
+        $(function () {
+            layerIndex = layer.msg('数据加载中...', { icon: 16,time:0 });
+            var data = {
+                pGroupID:5760
+            };
+            syAjax("POST", false,t_url + "apimanage/MGWApp/WeiXinInfo/GetCurrentMenu", AppKeyId, data, QueryListBack);
+        });
+        
+        function QueryListBack(data){
+            var json=data.Data;
+            var index = DIALOG.LOADING();
+            layer.close(index);
+            if (json.flag) {
+                var datas = JSON.parse(json.data);
+                var nodes = datas.menu.button;
+                yTree.build({
+                    container: '.container',
+                    nodes: nodes
+                });
+            } else {
+                DIALOG.FAIL(json.msg);
+            }
+            layer.close(layerIndex);
+        } 
+        $('#btnReset').click(function () {
+            var nodes = yTree.getNodes();
+
+            if (!nodes || nodes.length == 0) {
+                DIALOG.ALERT('请创建菜单');
+                return;
+            }
+            var nodes = yTree.getNodes();
+            $.each(nodes, function (i, node) {
+                nodes[i] = encodeNodes(node);
+            });
+            var data={
+                pjson:JSON.stringify(nodes),
+                pGroupID:localStorage.MGroupID
+            };
+            syAjax("POST",false, t_url + "apimanage/MGWApp/WeiXinInfo/ResetMenu", AppKeyId, data, QueryCDListBack);
+   
+        });
+
+        function QueryCDListBack(data){
+            var json=data.Data;
+            index = DIALOG.LOADING();
+                layer.close(index);
+            if (json.flag) {
+                DIALOG.SUCCESS('菜单生成成功！');
+            } else {
+                DIALOG.FAIL(json.msg);
+            }
+        }
+
+        function encodeNodes(node) {
+            if ($.isArray(node.sub_button) && node.sub_button.length > 0) {
+                $.each(node.sub_button, function (i, item) {
+                    node.sub_button[i] = encodeNodes(item);
+                });
+            } else {
+                if (node.type == 'view') {
+                    node.url = encodeURIComponent(node.url);
+                }
+            } 
+            return node;
+        }
+    </script>
+</body>
+</html>

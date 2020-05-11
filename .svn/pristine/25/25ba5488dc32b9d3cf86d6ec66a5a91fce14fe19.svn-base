@@ -1,0 +1,33 @@
+﻿<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="../assets/css/bootstrap.min14ed.css?v=3.3.6" rel="stylesheet">
+<link href="../assets/css/font-awesome.min93e3.css?v=4.4.0" rel="stylesheet">
+
+<link href="../assets/css/animate.min.css" rel="stylesheet">
+<link href="../assets/css/style.min862f.css?v=4.1.4" rel="stylesheet">
+<link href="../assets/css/icons.css" rel="stylesheet" />
+<link href="../assets/css/base.css" rel="stylesheet" />
+<script src="https://www.meizhuwl.net/js/jquery-1.10.1.min.js" type="text/javascript"></script>
+<script src="../assets/js/layer/layer.js"></script>
+<script src="https://www.meizhuwl.net/js/laytpl.js" type="text/javascript"></script>
+<script src="../assets/js/laypage/laypage.js"></script>
+<script src="../assets/Config.js" type="text/javascript"></script>
+<script src="../assets/sysystem.js"></script>
+<script src="../assets/js/bootstrap.min.js?v=3.3.6"></script>
+<script src="../assets/js/content.min.js?v=1.0.0"></script>
+<script src="../assets/js/base.js"></script>
+<script src="../assets/func.js"></script>
+<script src="../assets/wx.tree.js?v=1.0"></script>
+<script>
+    var puMInfo;
+    $(function () {
+        if (localStorage.MInfo) {
+            puMInfo = JSON.parse(localStorage.MInfo);
+        }
+        //if (!puMInfo) {
+            
+        //    window.location.href = '../login.html';
+        //}
+    })
+</script>

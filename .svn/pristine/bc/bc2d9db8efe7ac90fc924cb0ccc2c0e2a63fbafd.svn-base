@@ -1,0 +1,43 @@
+﻿<div class="button-group">
+    <button type="button" class="button button-small dropdown-toggle">
+        选择链接 <span class="downward"></span>
+    </button>
+</div>
+<script>
+    //显示下拉菜单
+    $('body').on('click', '.dropdown-toggle', function () {
+        layer.open({
+            title: "选择链接",
+            type: 2,
+            area: ['280px', '330px'],//280 230
+            scrollbar: false,
+            fix: false,
+            maxmin: true,
+            content: '../publichtml/ForSelectLinker.aspx'
+        });
+    });
+    function SelectedLinker(pLinker, pIsOk, pWidth, pHeight, pTitle) {
+        layer.closeAll();
+        if (pIsOk) {
+            if (pLinker != "javascript:;") {
+                pLinker = pLinker;
+            }
+            $("#txtNewUrl").val(pLinker);
+            if (pTitle && !$("#txtTitle").val()) {
+                $("#txtTitle").val(pTitle);
+            }
+        }
+        else {
+            layer.open({
+                title: pTitle,
+                type: 2,
+                area: [pWidth + 'px', pHeight + 'px'],//280 230
+                scrollbar: false,
+                fix: false,
+                maxmin: true,
+                content: pLinker
+            });
+        }
+    }
+
+</script>

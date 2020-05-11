@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <link href="assets/images/admin/style.css" rel="stylesheet" type="text/css" />
+    <script src="assets/Config.js" type="text/javascript"></script>
+    <script src="https://www.meizhuwl.net/js/jquery-1.10.1.min.js" type="text/javascript"></script>
+    
+    <script src="assets/js/layer/layer.js"></script>
+    <script src="https://www.meizhuwl.net/js/laytpl.js" type="text/javascript"></script>
+    <script src="assets/sysystem.js" type="text/javascript"></script>
+</head>
+<body class="loginbody">
+    <div class="login-screen">
+        <div class="login-form">
+            <div style="width: 320px; float: left">
+                <h1 id="h1"></h1>
+                <div class="control-group">
+                    <input id="txtUserName" type="text" maxlength="20" class="login-field" placeholder="用户名" title="用户名" />
+                    <label class="login-field-icon user" for="txtUserName"></label>
+                </div>
+                <div class="control-group">
+                    <input id="txtPassword" type="Password" maxlength="20" class="login-field" placeholder="密码" onkeydown="onTextKeyDown()" title="密码"
+                           style="ime-mode: disabled;" />
+                    <label class="login-field-icon pwd" for="txtPassword"></label>
+                </div>
+                <div>
+                    <input id="btnlogin" type="button" value="登录" onclick="Login()" class="btn-login" />
+                </div>
+                <span class="login-tips"><i></i><b id="msgtip">请输入用户名密码!</b></span>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            document.title = ConWebSiteName;
+            $("#h1").html(ConWebSiteName)
+        })
+        function onTextKeyDown() {
+            if (event.keyCode == 13) { //如果按的是enter键 13是enter 
+                Login();
+            }  
+        }
+        function Login() {
+            $("#btnlogin").hide();
+            var loginName = $("#txtUserName").val();
+            var loginPassword = $("#txtPassword").val();
+            if (loginName == "") {
+                //提示
+                ConShowMsg("请输入登录账号");
+                $("#btnlogin").show();
+                return;
+            }
+            if (loginPassword == "" ) {
+                //提示
+                ConShowMsg('密码不能空');
+                $("#btnlogin").show();
+                return;
+            }
+           
+            var params = {
+                username: loginName,
+                password: loginPassword
+            };
+            syAjax("POST", false, ConApiUrl + 'manage/passprot/applogin', "AppManage:123", params, loginBack, syAjaxErrorBack);
+        }
+        function loginBack(json) {
+            if (json) {
+                if (json.StatusCode=="0") {
+                    localStorage.MInfo = JSON.stringify(json.Result.AccessToken);
+                    ConShowMsg("登录成功", "Main.html");
+                     return;
+                }
+                else {
+                    ConShowMsg(json.StatusMessage);
+                }
+                $("#btnlogin").show();
+
+            }
+            else {
+                $("#btnlogin").show();
+            }
+        }
+    </script>
+</body>
+</html>

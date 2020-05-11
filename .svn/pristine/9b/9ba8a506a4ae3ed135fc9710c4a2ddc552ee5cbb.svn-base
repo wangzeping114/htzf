@@ -1,0 +1,54 @@
+﻿using HTZF.Manage.Api.Filter;
+using System.Threading.Tasks;
+using System.Web.Http;
+using WS.HTZF.Application.Authentication;
+using WS.HTZF.Application.Dtos;
+using WS.HTZF.Application.Services;
+using WS.HTZF.Core.Enums;
+using WS.HTZF.Core.HttpController;
+
+namespace HTZF.Manage.Api.Controllers
+{
+    /// <summary>
+    /// 登录注册权限管理页面
+    /// </summary>
+    [RoutePrefix("manage/passprot")]
+    public class PassprotController : ApiController
+    {
+        private readonly PassportService passportService;
+
+        public PassprotController(PassportService passportService)
+        {
+            this.passportService = passportService;
+        }
+
+        /// <summary>
+        /// 用户登录
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("applogin")]
+        [AllowAnonymous]
+         public async Task<ApiResult<WebToken>> AppUserSingIn(LoginAccountDto dto)
+        {
+             var result= await passportService.SingInAppUserAsync(dto.UserName, dto.Password);
+             return new ApiResult<WebToken>(result);
+        }
+
+        /// <summary>
+        /// 用户注册
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("addappuser")]
+        [PermissionAuthorize("push", Permission.Add)]
+        public async Task<ApiResult> AppUserRegister(NewAccountDto dto)
+        {
+            await passportService.RegisterAppUserAsync(dto);
+            return ApiResult.Success;
+        }
+    }
+}
