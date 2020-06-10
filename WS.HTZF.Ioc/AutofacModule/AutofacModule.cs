@@ -2,6 +2,7 @@
 using AutoMapper;
 using System.Collections.Generic;
 using WS.HTZF.Application.MappingProfile;
+using WS.HTZF.Core.Entites.Sys;
 
 namespace WS.HTZF.Ioc.AutofacModule
 {
@@ -10,10 +11,16 @@ namespace WS.HTZF.Ioc.AutofacModule
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<AccountProfile>().As<Profile>();
+            builder.RegisterType<MenuProfile>().As<Profile>();
+            builder.RegisterType<RoleProfile>().As<Profile>();
+            builder.RegisterType<CategoryProfile>().As<Profile>();
+            builder.RegisterType<CdyProfile>().As<Profile>();
             builder.Register(c => new MapperConfiguration(cfg =>
             {
-                foreach (var profile in c.Resolve<IEnumerable<Profile>>())
-                {
+                //cfg.ForAllMaps((obj, cnfg) => cnfg.ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null)));
+            foreach (var profile in c.Resolve<IEnumerable<Profile>>())
+            {
+                    profile.ForAllMaps((obj, cnfg) => cnfg.ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null)));
                     cfg.AddProfile(profile);
                 }
             })).AsSelf().SingleInstance();

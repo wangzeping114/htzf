@@ -1,0 +1,33 @@
+﻿using System.Data.Entity.ModelConfiguration;
+using WS.HTZF.Core.Entites.Sys;
+
+namespace WS.HTZF.Infrastructure.EntityConfigurations
+{
+    public class CommodityConfiguration: EntityTypeConfiguration<Commodity>
+    {
+        public CommodityConfiguration()
+        {
+            this.Property(c => c.TitileOrName)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            this.Property(c => c.SerialNumber)
+                .IsOptional()
+                .HasMaxLength(200);
+
+            this.Property(c => c.Price)
+                .IsRequired();
+
+
+            this.Property(c => c.MarketPrice)
+                .IsRequired();
+          
+
+            this.Property(c => c.ShelfTime)
+                .IsOptional();
+
+
+            ToTable($"TWS_{nameof(Commodity)}");
+        }
+    }
+}

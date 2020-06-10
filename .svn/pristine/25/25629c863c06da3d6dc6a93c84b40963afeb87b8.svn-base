@@ -1,0 +1,11 @@
+﻿namespace WS.HTZF.Application.Resources
+{
+    /// <summary>
+    /// 商品资源
+    /// </summary>
+    public class CdyRescource
+    {
+
+    }
+}
+

@@ -1,0 +1,21 @@
+﻿using AutoMapper;
+using WS.HTZF.Application.Dtos;
+using WS.HTZF.Core.Entites.Sys;
+
+namespace WS.HTZF.Application.MappingProfile
+{
+    /// <summary>
+    /// 商品
+    /// </summary>
+    public class CdyProfile:Profile
+    {
+        /// <summary>
+        /// ctor.
+        /// </summary>
+        public CdyProfile()
+        {
+            CreateMap<AddCdyDto, Commodity>()
+                .ForMember(c=>c.Stock,o=>o.MapFrom(s=>s.StockDto));
+        }
+    }
+}

@@ -1,0 +1,23 @@
+﻿using System.Web.Http;
+using WS.HTZF.Application.Authentication;
+using WS.HTZF.Utilities.Helper;
+
+namespace HTZF.Manage.Api.Controllers
+{
+    public class BaseController : ApiController
+    {
+        /// <summary>
+        /// 获取当前请求的AppId
+        /// </summary>
+        protected int UserId
+        {
+            get
+            {
+                var authorizationHeader = base.Request.Headers.Authorization;
+                var accessToken = authorizationHeader.Parameter;
+                var subject= LazyFactory<JwtHandler>.Instance.GetTokenPayload(accessToken).Subject;
+                return int.Parse(subject);
+            }
+        }
+    }
+}

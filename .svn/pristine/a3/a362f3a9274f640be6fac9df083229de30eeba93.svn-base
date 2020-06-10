@@ -1,0 +1,23 @@
+﻿using AutoMapper;
+using WS.HTZF.Application.Dtos;
+using WS.HTZF.Application.Resources;
+using WS.HTZF.Core.Entites.Sys;
+
+namespace WS.HTZF.Application.MappingProfile
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    public class RoleProfile:Profile
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public RoleProfile()
+        {
+            CreateMap<ModifiyRoleDto, Role>();
+            CreateMap<AddRoleMenuDto, Role>();
+            CreateMap<Role, RoleResource>();
+        }
+    }
+}

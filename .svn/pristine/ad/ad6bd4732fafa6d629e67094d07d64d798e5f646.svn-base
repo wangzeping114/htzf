@@ -1,0 +1,76 @@
+﻿using System.IO;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Http;
+using WS.HTZF.Application.Resources;
+using WS.HTZF.Application.Services;
+using WS.HTZF.Core.Exceptions;
+using WS.HTZF.Core.HttpController;
+using WS.HTZF.Utilities.Extensions;
+
+namespace HTZF.Manage.Api.Controllers
+{
+    /// <summary>
+    /// 文件上传接口
+    /// </summary>
+    [RoutePrefix("api/fileupload")]
+    public class FileController : ApiController
+    {
+        private readonly FileService fileService;
+
+        public FileController(FileService  fileService)
+        {
+            this.fileService = fileService;
+        }
+
+        /// <summary>
+        /// 文件上传
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("file")]
+        public async Task<ApiResult<FileUploadResult>> UploadFile(HttpPostedFileBase file)
+        => await ApiResult(file, "file");
+
+
+        /// <summary>
+        /// 图片上传
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("image")]
+        public async Task<ApiResult<FileUploadResult>> UploadImage(HttpPostedFileBase file)
+             => await ApiResult(file, "images");
+
+
+
+        /// <summary>
+        /// 包上传
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("package")]
+        public async Task<ApiResult<FileUploadResult>> UploadPackage(HttpPostedFileBase file)
+             => await ApiResult(file, "images");
+
+        private async Task<ApiResult<FileUploadResult>> ApiResult(HttpPostedFileBase file, string filePath)
+        {
+            if (file == null || file.ContentLength < 0) throw new ParameterNullException($"{nameof(file)}参数为空.");
+
+            var fileName = file.FileName;
+            using (var stream = file.InputStream)
+            {
+                var fBytes = stream.ReadAllBytes();
+                var result = await UploadFileAsync(filePath, fileName, fBytes);
+                return new ApiResult<FileUploadResult>() { Result = result };
+            }
+        }
+
+        private async Task<FileUploadResult> UploadFileAsync(string filePath, string fileName, byte[] fBytes)
+        {
+            var fileExt = Path.GetExtension(fileName);
+            var result = await fileService.UploadFileAsync(filePath, fileExt, fBytes);
+            return result;
+        }
+    }
+}

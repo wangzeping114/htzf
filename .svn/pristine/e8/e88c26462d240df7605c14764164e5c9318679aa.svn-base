@@ -1,0 +1,306 @@
+﻿using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using WS.HTZF.Application.Authentication;
+using WS.HTZF.Application.Dtos;
+using WS.HTZF.Application.Handlers;
+using WS.HTZF.Application.Resources;
+using WS.HTZF.Core.Entites.Sys;
+using WS.HTZF.Core.Exceptions;
+using WS.HTZF.Core.Repositories;
+
+namespace WS.HTZF.Application.Services
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    public class PassportService : BaseService
+    {
+        private readonly IAccountRepository _accountRepository;
+        private readonly IPasswordHandler passwordHandler;
+        private readonly IRoleRespository roleRespository;
+        private readonly IMenuRespository menuRespository;
+        private readonly IJwtHandler jwtHandler;
+        private readonly IRoleMenuRepository roleMenuRepository;
+
+        /// <summary>
+        /// ctor.
+        /// </summary>
+        public PassportService(IAccountRepository accountRepository,
+            IPasswordHandler passwordHandler,
+            IRoleRespository roleRespository,
+            IMenuRespository menuRespository,
+            IJwtHandler jwtHandler,
+            IRoleMenuRepository roleMenuRepository,
+            IMapper mapper) : base(mapper)
+        {
+            _accountRepository = accountRepository;
+            this.passwordHandler = passwordHandler;
+            this.roleRespository = roleRespository;
+            this.menuRespository = menuRespository;
+            this.jwtHandler = jwtHandler;
+            this.roleMenuRepository = roleMenuRepository;
+        }
+        /// <summary>
+        /// 注册后台账号 
+        /// </summary>
+        /// <param name="newAccount"></param>
+        /// <returns></returns>
+        public async Task RegisterAppUserAsync(NewAccountDto newAccount)
+        {
+            var account= await GetAccountByUserName(newAccount.UserName);
+            if (account != null) 
+            {
+                throw new FriendlyException($"抱歉{newAccount.UserName}该账号已存在!");
+            }
+            var entity = base.Map<NewAccountDto, Account>(newAccount);
+            entity.Password = passwordHandler.GenerateEncryptPassword(newAccount.Password);
+            await _accountRepository.InsertAsync(entity);
+            await _accountRepository.UnitOfWork.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// 所有角色
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<RoleResource>> GetAllRoles()
+        {
+            var roles = await roleRespository.GetAllAsync();
+            return Map<List<Role>, List<RoleResource>>(roles.ToList());
+        }
+
+        /// <summary>
+        /// 根据ID删除角色
+        /// </summary>
+        /// <returns></returns>
+        public async Task DeleteRoleById(int id)
+        {
+            var role=  await GetRoleById(id);
+            if (role == null)
+            {
+                throw new FriendlyException("该角色不存在了");
+            }
+            if (role.Accounts.Count > 0)
+            {
+                throw new FriendlyException("抱歉该角色下绑定了多名用户,无法删除");
+            }
+            await roleRespository.DeleteAsync(id);
+            await roleRespository.UnitOfWork.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// 修改角色信息
+        /// </summary>
+        /// <returns></returns>
+        public async Task UpdateRoleAsync(ModifiyRoleDto modifiyRoleDto)
+        {
+            var model = Map<ModifiyRoleDto, Role>(modifiyRoleDto);
+            await roleRespository.UpdateAsync(model);
+            await roleRespository.UnitOfWork.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// 根据账号ID查询账号信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<AccountResource> GetByAccountById(int id)
+        {
+            var model = await _accountRepository.SingleOrDefaultAsync(x => x.Id == id);
+            return Map<Account, AccountResource>(model);
+        }
+
+        /// <summary>
+        /// 根据账号名查询账号信息
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        public async Task<AccountResource> GetByAccountByName(string username)
+        {
+            var model = await _accountRepository.SingleOrDefaultAsync(x => x.UserName.Equals(username));
+            return Map<Account, AccountResource>(model);
+        }
+
+
+        /// <summary>
+        /// 修改账号信息
+        /// </summary>
+        /// <param name="modifiyAccountDto"></param>
+        /// <returns></returns>
+        public async Task UpdateAccountAsync(ModifiyAccountDto modifiyAccountDto)
+        {
+            var exist = await GetAccountByUserName(modifiyAccountDto.UserName) == null ? false : true;
+            if (exist) throw new InvalidArgumentException($"{modifiyAccountDto.UserName}已存在");
+
+            var model = Map<ModifiyAccountDto, Account>(modifiyAccountDto);
+
+            model.Password= passwordHandler.GenerateEncryptPassword(modifiyAccountDto.Password);
+
+            await _accountRepository.UpdateAsync(model);
+            await _accountRepository.UnitOfWork.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// 根据ID删除账号
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task DeleteAccountById(int id)
+        {
+            await _accountRepository.DeleteAsync(id);
+            await _accountRepository.UnitOfWork.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// 新增角色
+        /// </summary>
+        /// <returns></returns>
+        public async Task AddRoleAsync(AddRoleMenuDto roleDto)
+        {
+            if (roleDto.MenusId.Count == 0)
+            {
+                throw new InvalidArgumentException("请选择菜单页面");
+            }
+            var roleModel = Map<AddRoleMenuDto, Role>(roleDto);
+
+            var newRoleModel = await roleRespository.InsertAsync(roleModel);
+            var newroleId = newRoleModel.Id;
+            var rolemenus = new List<RoleMenu>();
+            foreach (var item in roleDto.MenusId)
+            {
+                var roleMenu = new RoleMenu()
+                {
+                    RoleId = newroleId,
+                    MenuId = item
+                };
+                rolemenus.Add(roleMenu);
+            }
+            await roleMenuRepository.InsertEntitiesAsync(rolemenus);
+            await roleMenuRepository.UnitOfWork.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// 新增页面菜单
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task AddMenuAysnc(MenuDto input)
+        {
+            if (input.ParentId == -1)
+            {
+                var entity = Map<MenuDto, Menu>(input);
+                await menuRespository.InsertAsync(entity);
+                await menuRespository.UnitOfWork.SaveChangesAsync();
+            }
+            else
+            {
+                var parentEntity = await menuRespository.GetParentMenu(input.ParentId.Value);
+                var entity = Map<MenuDto, Menu>(input);
+                parentEntity.Children.Add(entity);
+                await menuRespository.UnitOfWork.SaveChangesAsync();
+            }
+        }
+        
+
+        /// <summary>
+        /// 登录
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public async Task<WebToken> SingInAppUserAsync(string userName, string password)
+        {
+            Account appuser = await GetAccountByUserName(userName);
+            if (appuser == null)
+                throw new NotFoundException($"{userName}没有此账号或已被删除!");
+
+            var verifyPwd = passwordHandler.VerifyHashedPassword(appuser.Password, password);
+
+            if (!verifyPwd)
+                throw new InvalidArgumentException($"{userName}账号的密码不正确!");
+
+            if (appuser.IsDisplay)
+                throw new FriendlyException($"抱歉{userName}账号已被停用!");
+
+            var dic = new Dictionary<string, string>
+            {
+                {"RoleId",appuser.RoleId.ToString()}
+            };
+            appuser.LatestUpdatedAt = DateTime.Now;
+            await _accountRepository.UpdateAsync(appuser);
+            var jwt = jwtHandler.CreateToken(appuser.Id.ToString(), dic);
+            jwt.FullName = appuser.FullName;
+            return jwt;
+        }
+
+        /// <summary>
+        /// 获取后台管理员列表
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<AccountResource>> GetAppUserList()
+        {
+            var users = await _accountRepository.GetAllAsync();
+            return Map<List<Account>, List<AccountResource>>(users.ToList());
+        }
+
+      
+        /// <summary>
+        /// 根据用户ID获取菜单列表
+        /// </summary>
+        /// <param name="userid"></param>
+        /// <returns></returns>
+        public async Task<List<MenuResource>> GetMenusByAccountId(int userid)
+        {
+            var user = await _accountRepository.SingleOrDefaultAsync(c=>c.Id.Equals(userid));
+            if (user.Role == null)
+                throw new FriendlyException("请超级管理员在权限组为您分配权限");
+            if (user.Role.IsSuperAdmin)
+            {
+                var menus = await GetMenusAsync();
+                return menus;
+            }
+            else
+            {
+                var menus = await GetMenusByRoleId(user.RoleId.Value);
+                return menus;
+            }
+        }
+
+        /// <summary>
+        /// 获取所有菜单
+        /// </summary>
+        /// <returns></returns>
+        private async Task<List<MenuResource>> GetMenusAsync()
+        {
+            var pmenus = await menuRespository.GetAllMenus();
+            return Map<List<Menu>, List<MenuResource>>(pmenus);
+        }
+        /// <summary>
+        /// 根据角色获取菜单资源
+        /// </summary>
+        /// <param name="roleid"></param>
+        /// <returns></returns>
+        private async Task<List<MenuResource>> GetMenusByRoleId(int roleid)
+        {
+            var menus = await menuRespository.GetMenuByRole(roleid);
+
+            return Map<List<Menu>, List<MenuResource>>(menus);
+        }
+
+        private async Task<Role> GetRoleById(int id)
+        {
+            return await roleRespository.SingleOrDefaultAsync(x => x.Id == id);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        private async Task<Account> GetAccountByUserName(string userName)
+        {
+            return await _accountRepository.SingleOrDefaultAsync(x => string.Equals(x.UserName, userName));
+        }
+    }
+}

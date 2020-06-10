@@ -1,0 +1,11 @@
+﻿namespace WS.HTZF.Core.Entites.Sys
+{
+    /// <summary>
+    /// 物流
+    /// </summary>
+    public class Logistics
+    {
+
+
+    }
+}

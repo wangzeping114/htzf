@@ -1,0 +1,230 @@
+﻿using HTZF.Manage.Api.Filter;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Web.Http;
+using WS.HTZF.Application.Authentication;
+using WS.HTZF.Application.Dtos;
+using WS.HTZF.Application.Resources;
+using WS.HTZF.Application.Services;
+using WS.HTZF.Core.Enums;
+using WS.HTZF.Core.HttpController;
+
+namespace HTZF.Manage.Api.Controllers
+{
+    /// <summary>
+    /// 登录注册权限管理页面
+    /// </summary>
+    [RoutePrefix("manage/passprot")]
+    public class PassprotController : BaseController
+    {
+        private readonly PassportService passportService;
+
+        public PassprotController(PassportService passportService)
+        {
+            this.passportService = passportService;
+        }
+
+        /// <summary>
+        /// 用户登录
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("applogin")]
+        [AllowAnonymous]
+        public async Task<ApiResult<WebToken>> AppUserSingIn(LoginAccountDto dto)
+        {
+      
+            var result = await passportService.SingInAppUserAsync(dto.UserName, dto.Password);
+            return new ApiResult<WebToken>(result);
+        }
+
+        /// <summary>
+        /// 用户注册
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("addappuser")]
+        [PermissionAuthorize("appUserRegister", Permission.Add)]
+        public async Task<ApiResult> AppUserRegister(NewAccountDto dto)
+        {
+            await passportService.RegisterAppUserAsync(dto);
+            return ApiResult.Success;
+        }
+        /// <summary>
+        /// 根据用户Id获取所有菜单
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("getmenus")]
+        [PermissionAuthorize("getMenus", Permission.Query)]
+        public async Task<ApiResult<List<MenuResource>>> GetMenus()
+        {
+            var menus = await passportService.GetAllMenus();
+            return new ApiResult<List<MenuResource>>(menus);
+        }
+
+        /// <summary>
+        /// 根据角色ID删除角色
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("delrolebyId/{roleId}")]
+        [PermissionAuthorize("deleterole", Permission.Delete)]
+        public async Task<ApiResult> DeleteRoleById(int roleId)
+        {
+            await passportService.DeleteRoleById(roleId);
+            return ApiResult.Success;
+        }
+
+        /// <summary>
+        /// 根据Id查询账号信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("getaccountbyId/{id}")]
+        [PermissionAuthorize("getaccountbyid",Permission.Query)]
+        public async Task<ApiResult<AccountResource>> GetAccountById(int id)
+        {
+            var model= await passportService.GetByAccountById(id);
+            return new ApiResult<AccountResource>(model);
+        }
+        /// <summary>
+        /// 根据用户名查询账号信息
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("getaccountbyusername")]
+        [PermissionAuthorize("getaccountbyusername", Permission.Query)]
+        public async Task<ApiResult<List<AccountResource>>> GetAccountByName(string username)
+        {
+            var models = await passportService.FindAccountsByName(username);
+            return new ApiResult<List<AccountResource>>(models);
+        }
+
+
+        /// <summary>
+        ///根据ID删除账号
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("delaccount/{accountId}")]
+        [PermissionAuthorize("deleteaccountbyId",Permission.Delete)]
+        public async Task<ApiResult> DeleteAccountById(int accountId)
+        {
+            await passportService.DeleteAccountById(accountId);
+            return ApiResult.Success;
+        }
+
+        /// <summary>
+        /// 根据角色ID获取菜单列表
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("getmenusbyroleId/{roleId}")]
+        [PermissionAuthorize("getmenusbyroleId", Permission.Query)]
+        public async Task<ApiResult<RoleMenuResource>> GetRoleMenuByRoleId(int roleId)
+        {
+            var rolemenu = await passportService.GetRoleMenusByRoleId(roleId);
+            return new ApiResult<RoleMenuResource>(rolemenu);
+        }
+
+        /// <summary>
+        /// 修改角色菜单
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("modifyrolemenu")]
+        [PermissionAuthorize("updaterolemenu",Permission.Update)]
+        public async Task<ApiResult> UpdateRoleMenu(ModfiyRoleMenuDto modfiyRoleMenuDto)
+        {
+            await passportService.UpdateRoleMenuAsync(modfiyRoleMenuDto, base.RoleId);
+            return ApiResult.Success;
+        }
+
+        /// <summary>
+        /// 修改角色
+        /// </summary>
+        /// <param name="modifiyRoleDto"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("modifyrole")]
+        [PermissionAuthorize("updaterole",Permission.Update)]
+        public async Task<ApiResult> UpdateRoleAsync(ModifiyRoleDto modifiyRoleDto)
+        {
+            await passportService.UpdateRoleAsync(modifiyRoleDto);
+            return ApiResult.Success;
+        }
+
+        /// <summary>
+        /// 修改账号
+        /// </summary>
+        /// <param name="modifiyAccountDto"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("modifyaccount")]
+        [PermissionAuthorize("updateaccount",Permission.Update)]
+        public async Task<ApiResult> UpdateAccountAsync(ModifiyAccountDto modifiyAccountDto)
+        {
+            await passportService.UpdateAccountAsync(modifiyAccountDto);
+            return ApiResult.Success;
+        }
+
+        ///// <summary>
+        ///// 获取所有角色
+        ///// </summary>
+        ///// <returns></returns>
+        [HttpGet]
+        [Route("getroles")]
+        [PermissionAuthorize("getroles", Permission.Query)]
+        public async Task<ApiResult<List<RoleResource>>> GetRoles()
+        {
+            var roles = await passportService.GetAllRoles();
+            return new ApiResult<List<RoleResource>>(roles);
+        }
+
+        /// <summary>
+        ///  新增页面菜单
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("addmenu")]
+        [PermissionAuthorize("addmenu",Permission.Add)]
+        public async Task<ApiResult> AddMemuAsync(MenuDto menuDto)
+        {
+            await passportService.AddMenuAysnc(menuDto);
+            return ApiResult.Success;
+        }
+        /// <summary>
+        /// 新增角色菜单
+        /// </summary>
+        /// <param name="roleDto"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("addrolemenu")]
+        [PermissionAuthorize("addrolemenu",Permission.Add)]
+        public async Task<ApiResult> AddRoleMenu(AddRoleMenuDto roleDto)
+        {
+            await passportService.AddRoleAsync(roleDto);
+            return ApiResult.Success;
+        }
+        ///// <summary>
+        ///// 获取所有账号
+        ///// </summary>
+        ///// <returns></returns>
+        [HttpGet]
+        [Route("getaccounts")]
+        [PermissionAuthorize("getaccounts", Permission.Query)]
+        public async Task<ApiResult<List<AccountResource>>> GetAccounts()
+        {
+            var accounts = await passportService.GetAppUserList();
+            return new ApiResult<List<AccountResource>>(accounts);
+        }
+    }
+}

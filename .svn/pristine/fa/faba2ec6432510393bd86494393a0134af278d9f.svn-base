@@ -1,0 +1,125 @@
+﻿using AutoMapper;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using WS.HTZF.Application.Dtos;
+using WS.HTZF.Application.Resources;
+using WS.HTZF.Core.Entites.Sys;
+using WS.HTZF.Core.Exceptions;
+using WS.HTZF.Core.Repositories;
+
+namespace WS.HTZF.Application.Services.Sys
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    public class CdyportService : BaseService
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mapper"></param>
+        public CdyportService(IMapper mapper,
+            ICdyDetailRespository cdyDetailRespository,
+            ICdyRespository cdyRespository,
+            ICdyPirtureRespository cdyPirtureRespository,
+            ICategoryRespository categoryRespository) : base(mapper)
+        {
+            CdyDetailRespository = cdyDetailRespository;
+            CdyRespository = cdyRespository;
+            CdyPirtureRespository = cdyPirtureRespository;
+            CategoryRespository = categoryRespository;
+        }
+        private ICdyDetailRespository CdyDetailRespository { get; }
+        private ICdyRespository CdyRespository { get; }
+        private ICdyPirtureRespository CdyPirtureRespository { get; }
+        private ICategoryRespository CategoryRespository { get; }
+
+        /// <summary>
+        /// 查询分类列表
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public async Task<List<CategoryRescource>> GetCategories(string name)
+        {
+            var models = new List<Category>();
+            if (name == "!")
+            {
+
+                models = await CategoryRespository.GetAllListAsync();
+            }
+            else
+            {
+                models = await CategoryRespository.GetAllListAsync(x => x.Name.Contains(name));
+            }
+            return Map<List<Category>, List<CategoryRescource>>(models);
+        }
+
+        /// <summary>
+        /// 更新分类实体
+        /// </summary>
+        /// <returns></returns>
+        public async Task UpdateCategoryAsync(ModifiyCategoryDto modifiyCategoryDto)
+        {
+            var model = Map<ModifiyCategoryDto, Category>(modifiyCategoryDto);
+            await CategoryRespository.UpdateAsync(model);
+        }
+
+        /// <summary>
+        ///删除分类 
+        /// </summary>
+        /// <returns></returns>
+        public async Task DeleteCategoryById(int id)
+        {
+            var model = await CategoryRespository.SingleOrDefaultAsync(c => c.Id == id);
+            if (model == null)
+            {
+                throw new FriendlyException("该分类已经不存在了");
+            }
+            if (model.Commoditys.Count > 0)
+            {
+                throw new InvalidArgumentException("删除失败,该分类下面有商品");
+            }
+            await CategoryRespository.DeleteAsync(id);
+            await CategoryRespository.UnitOfWork.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// 新增分类
+        /// </summary>
+        /// <returns></returns>
+        public async Task AddCategoryAsync(AddCategoryDto addCategoryDto)
+        {
+            var mapModel = Map<AddCategoryDto, Category>(addCategoryDto);
+            await CategoryRespository.InsertAsync(mapModel);
+            await CategoryRespository.UnitOfWork.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// 查询商品列表
+        /// </summary>
+        /// <returns></returns>
+        public async Task GetCdyList()
+        {
+            await Task.CompletedTask;
+        }
+        /// <summary>
+        /// 更新商品列表
+        /// </summary>
+        /// <returns></returns>
+        public async Task UpdateCdyAsync()
+        {
+            await Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// 新增商品列表
+        /// </summary>
+        /// <returns></returns>
+        public async Task AddCdyAsync(AddCdyDto addCdyDto)
+        {
+            var model = Map<AddCdyDto, Commodity>(addCdyDto);
+            await CdyRespository.InsertAsync(model);
+            await CdyRespository.UnitOfWork.SaveChangesAsync();
+        }
+    }
+}

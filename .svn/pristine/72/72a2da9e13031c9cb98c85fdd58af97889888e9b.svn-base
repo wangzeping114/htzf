@@ -1,0 +1,31 @@
+﻿using Autofac;
+using AutoMapper;
+using System.Collections.Generic;
+using WS.HTZF.Application.MappingProfile;
+using WS.HTZF.Core.Entites.Sys;
+
+namespace WS.HTZF.Ioc.AutofacModule
+{
+    public  class AutofacModule:Module
+    {
+        protected override void Load(ContainerBuilder builder)
+        {
+            builder.RegisterType<AccountProfile>().As<Profile>();
+            builder.RegisterType<MenuProfile>().As<Profile>();
+            builder.RegisterType<RoleProfile>().As<Profile>();
+            builder.RegisterType<CategoryProfile>().As<Profile>();
+            builder.Register(c => new MapperConfiguration(cfg =>
+            {
+                //cfg.ForAllMaps((obj, cnfg) => cnfg.ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null)));
+
+            foreach (var profile in c.Resolve<IEnumerable<Profile>>())
+            {
+                    profile.ForAllMaps((obj, cnfg) => cnfg.ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null)));
+                    cfg.AddProfile(profile);
+                }
+            })).AsSelf().SingleInstance();
+
+            builder.Register(c => c.Resolve<MapperConfiguration>().CreateMapper(c.Resolve)).As<IMapper>().InstancePerLifetimeScope();
+        }
+    }
+}

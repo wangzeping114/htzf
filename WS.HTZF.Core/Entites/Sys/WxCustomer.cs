@@ -1,0 +1,65 @@
+﻿using System;
+using WS.HTZF.Core.Enums;
+using WS.HTZF.Core.SeedWorks;
+
+namespace WS.HTZF.Core.Entites.Sys
+{
+    /// <summary>
+    /// 微信端用户
+    /// </summary>
+    public class WxCustomer:Entity<int>
+    {
+        public WxCustomer()
+        {
+            CreateTime = DateTime.Now;
+            GenderType = GenderType.Unknown;
+        }
+        /// <summary>
+        /// 微信OpenId
+        /// </summary>
+        public string OpenId { get; set; }
+
+        /// <summary>
+        /// 头像
+        /// </summary>
+        public string Avtar { get; set; }
+
+        /// <summary>
+        /// 昵称
+        /// </summary>
+        public string NickName { get; set; }
+
+        /// <summary>
+        /// 国家
+        /// </summary>
+        public string Country { get; set; }
+        /// <summary>
+        /// 省份
+        /// </summary>
+        public string Province { get; set; }
+        /// <summary>
+        /// 城市
+        /// </summary>
+        public string City { get; set; }
+
+        /// <summary>
+        /// 性别
+        /// </summary>
+        public GenderType GenderType { get; set; }
+
+        /// <summary>
+        ///创建日期
+        /// </summary>
+        public DateTime CreateTime { get; set; }
+
+        /// <summary>
+        /// 用户ID
+        /// </summary>
+        public Guid CustomerId { get; set; }
+
+        /// <summary>
+        /// 客户
+        /// </summary>
+        public virtual Customer Customer { get; set; }
+    }
+}

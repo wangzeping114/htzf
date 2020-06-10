@@ -1,0 +1,86 @@
+﻿using HTZF.Manage.Api.Filter;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Web.Http;
+using WS.HTZF.Application.Dtos;
+using WS.HTZF.Application.Resources;
+using WS.HTZF.Application.Services.Sys;
+using WS.HTZF.Core.Enums;
+using WS.HTZF.Core.HttpController;
+
+namespace HTZF.Manage.Api.Controllers
+{
+    /// <summary>
+    /// 商品分类，图片，详情管理
+    /// </summary>
+    [RoutePrefix("manage/cdyprot")]
+    public class CdyprotController : BaseController
+    {
+        private readonly CdyportService cdyportService;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cdyportService"></param>
+        public CdyprotController(CdyportService cdyportService)
+        {
+            this.cdyportService = cdyportService;
+        }
+
+        ///// <summary>
+        ///// 根据分类名称查询分类列表
+        ///// </summary>
+        ///// <param name="name">分类名</param>
+        ///// <returns>分类列表</returns>
+        [HttpGet]
+        [Route("getcatoriesByName")]
+        [PermissionAuthorize("getcatoriesByName", Permission.Query)]
+        public async Task<ApiResult<List<CategoryRescource>>> GetCatoriesByName(string name)
+        {
+            var models = await cdyportService.GetCategories(name);
+            return new ApiResult<List<CategoryRescource>>(models);
+        }
+
+         /// <summary>
+         /// 新增分类
+         /// </summary>
+         /// <param name="addCategoryDto"></param>
+         /// <returns></returns>
+        [HttpPost]
+        [Route("addCategory")]
+        [PermissionAuthorize("addCategory", Permission.Add)]
+        public async Task<ApiResult> AddCategory(AddCategoryDto addCategoryDto)
+        {
+            await cdyportService.AddCategoryAsync(addCategoryDto);
+            return ApiResult.Success;
+        }
+
+        /// <summary>
+        /// 修改分类实体
+        /// </summary>
+        /// <param name="modifiyCategory"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("updateCategory")]
+        [PermissionAuthorize("updateCategory", Permission.Update)]
+        public async Task<ApiResult> UpdateCategory(ModifiyCategoryDto modifiyCategory)
+        {
+            await cdyportService.UpdateCategoryAsync(modifiyCategory);
+            return ApiResult.Success;
+        }
+
+        /// <summary>
+        /// 根据Id删除分类
+        /// </summary>
+        /// <param name="modifiyCategory"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("delCategorybyId/{categoryid}")]
+        [PermissionAuthorize("delCategorybyId", Permission.Delete)]
+        public async Task<ApiResult> DeleteCategoryById(int categoryid)
+        {
+            await cdyportService.DeleteCategoryById(categoryid);
+            return ApiResult.Success;
+        }
+
+    }
+}

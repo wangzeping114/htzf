@@ -1,0 +1,38 @@
+﻿namespace WS.HTZF.Application.Dtos
+{
+    /// <summary>
+    /// 修改账号dto
+    /// </summary>
+    public class ModifiyAccountDto
+    {
+        /// <summary>
+        /// Id
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
+        /// 账号
+        /// </summary>
+        public string UserName { get; set; }
+
+        /// <summary>
+        /// 密码
+        /// </summary>
+        public string Password { get; set; }
+
+        /// <summary>
+        /// 全名
+        /// </summary>
+        public string FullName { get; set; }
+
+        /// <summary>
+        /// 是否停用
+        /// </summary>
+        public bool IsDisplay { get; set; }
+
+        /// <summary>
+        /// 角色ID
+        /// </summary>
+        public int? RoleId { get; set; }
+    }
+}

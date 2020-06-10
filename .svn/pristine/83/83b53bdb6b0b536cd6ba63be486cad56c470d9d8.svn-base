@@ -1,0 +1,87 @@
+namespace WS.HTZF.Infrastructure.Migrations
+{
+    using System;
+    using System.Data.Entity.Migrations;
+    
+    public partial class InitDataBase : DbMigration
+    {
+        public override void Up()
+        {
+            CreateTable(
+                "dbo.TWS_Account",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        UserName = c.String(nullable: false, maxLength: 100, storeType: "nvarchar"),
+                        Password = c.String(nullable: false, maxLength: 100, storeType: "nvarchar"),
+                        CreateAt = c.DateTime(nullable: false, precision: 0),
+                        LatestUpdatedAt = c.DateTime(nullable: false, precision: 0),
+                        FullName = c.String(maxLength: 50, storeType: "nvarchar"),
+                        IsDisplay = c.Boolean(nullable: false),
+                        RoleId = c.Int(),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.TWS_Role", t => t.RoleId)
+                .Index(t => t.RoleId);
+            
+            CreateTable(
+                "dbo.TWS_Role",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Name = c.String(nullable: false, maxLength: 100, storeType: "nvarchar"),
+                        Description = c.String(maxLength: 500, storeType: "nvarchar"),
+                        IsSuperAdmin = c.Boolean(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.TWS_RoleMenu",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Permission = c.Int(nullable: false),
+                        MenuId = c.Int(nullable: false),
+                        RoleId = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.TWS_Menu", t => t.MenuId, cascadeDelete: true)
+                .ForeignKey("dbo.TWS_Role", t => t.RoleId, cascadeDelete: true)
+                .Index(t => t.MenuId)
+                .Index(t => t.RoleId);
+            
+            CreateTable(
+                "dbo.TWS_Menu",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        ParentId = c.Int(),
+                        Icon = c.String(maxLength: 100, storeType: "nvarchar"),
+                        Name = c.String(nullable: false, maxLength: 200, storeType: "nvarchar"),
+                        ActionSref = c.String(maxLength: 200, storeType: "nvarchar"),
+                        Path = c.String(maxLength: 100, storeType: "nvarchar"),
+                        Level = c.Int(),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.TWS_Menu", t => t.ParentId)
+                .Index(t => t.ParentId);
+            
+        }
+        
+        public override void Down()
+        {
+            DropForeignKey("dbo.TWS_RoleMenu", "RoleId", "dbo.TWS_Role");
+            DropForeignKey("dbo.TWS_RoleMenu", "MenuId", "dbo.TWS_Menu");
+            DropForeignKey("dbo.TWS_Menu", "ParentId", "dbo.TWS_Menu");
+            DropForeignKey("dbo.TWS_Account", "RoleId", "dbo.TWS_Role");
+            DropIndex("dbo.TWS_Menu", new[] { "ParentId" });
+            DropIndex("dbo.TWS_RoleMenu", new[] { "RoleId" });
+            DropIndex("dbo.TWS_RoleMenu", new[] { "MenuId" });
+            DropIndex("dbo.TWS_Account", new[] { "RoleId" });
+            DropTable("dbo.TWS_Menu");
+            DropTable("dbo.TWS_RoleMenu");
+            DropTable("dbo.TWS_Role");
+            DropTable("dbo.TWS_Account");
+        }
+    }
+}

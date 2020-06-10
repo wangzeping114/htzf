@@ -1,0 +1,159 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="ProductTypeAdd.aspx.cs" Inherits="Product_ProductTypeAdd" %>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>商品类型编辑</title>
+    <!--#include virtual="../publichtml/pubHead.htm" --> 
+</head>
+<body class="gray-bg"> 
+<div class="form-horizontal">
+    <div class="row wrapper border-bottom white-bg page-heading">
+            <div class="col-sm-10">
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="../index/index.aspx">商品管理</a>
+                    </li>
+                    <li>
+                        <a href="AdvertList.aspx">商品类型</a>
+                    </li>
+                    <li>
+                        <strong>商品类型</strong>
+                    </li>
+                </ol>
+            </div>
+            <div class="col-sm-2 tr">
+                <a href="UserList.aspx" class="btn btn-xs btn-primary">返回列表</a>
+            </div>
+
+      </div>
+    <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="row">
+                <div class="col-sm-10">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>单页信息</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">商品类型</label>
+                                <div class="col-sm-8">
+                                    <input id="txtTypeName" type="text" required class="form-control" placeholder=""/>
+                                </div>
+                            </div> 
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">类型图片*</label>
+                                <div class="col-sm-8">
+                                    <div id="img-box" class="img-view-box">
+                                        <img class="img-border radius-small" style="height:80px; width:80px"   src="http://www.meizhuwl.net/img/addpic.png"  alt="暂无图片，点击切换图片"  id="imgMain" onclick="ShowUpMainImg()"   />
+                                    </div> 
+                                    <div class="input-note red">如需修改类型图片，请点击上面图片,建议1：1图片</div>
+                                </div>
+                            </div> 
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">排序</label>
+                                <div class="col-sm-8">
+                                    <input id="txtSort" type="text" required class="form-control" placeholder=""/>
+                                </div>
+                            </div> 
+  
+                            
+                            <div class="form-group">
+                                <label  class="col-sm-2 control-label">状态</label>
+                                <div class="col-sm-8">
+                                    <label for="sm">
+                                        <input type="checkbox" name="chkAdmin" id="txtStatus" class="chkadmin"  />
+                                        <span class="icon-square-o checkbox text-sub"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-8">
+                                    <a class=" btn btn-primary btn-sm ml20" href="javascript:;" onclick="Save()" id="btnSave"><i class="fa fa-save"></i> 保 存</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div> 
+    <script>
+        var mID = 0;
+        var mInfo = {};
+        var puMInfo;
+        $(function () {
+            mID = syUrlParam("id");
+            if (localStorage.MInfo) {
+                puMInfo = JSON.parse(localStorage.MInfo);
+            }
+            if (mID)
+            {
+                Open();
+            }
+        })
+        
+
+        function ShowUpMainImg() {
+            syOpenUploadImgDialog({
+                url: '../Controls/UploadImage.aspx',
+                method: 'getUploadImg',
+                xscale: 16,
+                yscale:9
+            });
+        }
+        function getUploadImg(url) {
+            $("#imgMain").attr("src", url)
+            $("#img-box img").attr("src", url);
+            $("#img-box").removeClass("hidden");
+            mInfo.FPreImg = url;
+            layer.closeAll();
+        }
+        function Open() {
+            var params = {
+                //pFSchoolID: mID
+            };
+            syAjaxWithHeader(puMInfo,"Get", false, ConApiUrl + 'manage/cdyprot/getaccountbyId/'+mID, "AppManage:123", params, GetInfoBack, syAjaxErrorBack);
+
+        }
+        function GetInfoBack(json) {
+            if (json && json.Result) {
+                mInfo = json.Result;
+                $("#txtUserName").val(mInfo.UserName);
+                $("#txtFullName").val(mInfo.FullName);
+                $("#txtPassword").val(mInfo.Password);
+                $("#txtPassword2").val(mInfo.Password);
+                $("#txtRole").val(mInfo.RoleId);
+            }
+        }
+        function Save() {
+            var params = {
+                Name : $("#txtTypeName").val(),
+                Icon : $("#imgMain").val(),
+                Sequence: $("#txtSort").val(),
+                IsDisplay:$("#txtStatus").prop('checked')
+            };
+           
+            if (mID > 0) {
+                params.Id = mID;
+                syAjaxWithHeader(puMInfo,"POST", false, ConApiUrl + 'manage/passprot/modifyaccount', "AppManage:123", params, SetTPartnerInfofBack, syAjaxErrorBack);
+            } else {
+                syAjaxWithHeader(puMInfo,"POST", false, ConApiUrl + 'manage/cdyprot/addCategory', "AppManage:123", params, SetTPartnerInfofBack, syAjaxErrorBack);
+            }
+
+           
+        }
+        function SetTPartnerInfofBack(json) {
+           
+                if (json.StatusCode=="0") {
+                    ConShowMsg(json.StatusMessage, "ProductTypeList.aspx");
+                }
+                else {
+                    ConShowMsg(json.StatusMessage);
+                }
+            
+        }
+     
+    </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+﻿  .role-group
+{
+    width: 200px;
+    margin-bottom: 10px;
+    float: left;
+}
+.padding-content
+{
+    padding: 20px 40px 60px;
+}
+.form-x .form-group .mz-field
+{
+    width:80%;
+    padding: 7px 7px 7px 0;
+}
+.form-x .form-group .mz-label
+{
+    width:20%;
+}
+.padding-bottom-40px
+{
+    padding-bottom:40px
+}
+
+
+.form-inline .form-group .info-field
+{
+    padding-right:1rem;
+}
+.form-inline .form-button.title-btn-right
+{
+    position:relative;
+    top:2px;
+    right:15px
+}
+
+
+.width-max
+{
+    width:100%;
+}
+
