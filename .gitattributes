@@ -2,7 +2,8 @@
 # Set default behavior to automatically normalize line endings.
 ###############################################################################
 * text=auto
-
+*.rb linguist-language=Asp.Net
+*.glyphs linguist-language=OpenStep-Property-List
 ###############################################################################
 # Set default behavior for command prompt diff.
 #
